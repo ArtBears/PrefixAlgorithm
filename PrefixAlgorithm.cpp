@@ -31,7 +31,7 @@ int main(int argc, char * argv[]){
 
     string holder;
     string operation;
-    string word = "/9899";
+    string word = "*9899";
     stack<string> operands;
     stack<string> operators;
 
@@ -103,8 +103,12 @@ int main(int argc, char * argv[]){
             }
         }
     }
+if(operators.empty()){
+    cout << "Answer: " << operands.top() << endl;
+}else{
+    cout << "Operator stack never emptied. Please input a valid prefix operation." << endl;
+}
 
-cout << "answer: " << operands.top() << endl;
 
 }
 
