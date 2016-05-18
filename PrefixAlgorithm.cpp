@@ -1,187 +1,110 @@
+/* On my honor,
+The following program is a result of personal effort. I have not discussed with
+anyone other than my instructor or any appropriate person in charge of the class.
+I have not used, or slightly modified  code or portion of code from another
+student, or an unauthorized source.
+If any C++ language code or documentation used in my program was obtained from
+another source, such as a textbook or course notes, that has been clearly noted
+with a proper citation in the comments of my program.
+I have not designed this program in such a way as to defeat or interfere with the
+normal operation of the eniac system or cslab machines at Hunter College .
+< Glyne Gittens >
+*/
 //
 // Created by Glyne Gittens on 5/1/16.
 //
 #include <string>
 #include <stack>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
 
-bool isMarker(char input){
-    if(input != '$'){
-        return false;
-    }
-    return true;
-}
-
-
-void performOperation(int& original, stack<int>& operands ,stack<int>& holder, stack<char>& operators) {
-    cout << "Value of Current: " << original << endl;
-    while (!holder.empty()) {
-        cout << "Starting Perform Op while loop" << endl;
-        cout << "While Current Value: " << original << endl;
-        cout << "Top of operand stack: " << operands.top() << endl;
-        switch (operators.top()) {
-            case '*':
-                if(holder.top() == 0){
-                    holder.pop();
-                    holder.push(1);
-                }
-                original = original * holder.top();
-                holder.pop();
-                cout << "*: " << original << " and " << holder.top() << endl;
-                break;
-            case '/':
-                if(holder.top() == 0){
-                    holder.pop();
-                    holder.push(1);
-                }
-                original = original / holder.top();
-                holder.pop();
-                cout << "/: " <<original << " and " << holder.top() << endl;
-                break;
-            case '+':
-
-                cout << "+: " << original  << " and " << holder.top() << endl;
-                original = original + holder.top();
-                holder.pop();
-                break;
-
-            case '-':
-                original = original - holder.top();
-                holder.pop();
-                cout << " -: " << original << " and " << holder.top() << endl;
-                break;
-            default:
-                cerr << "Invalid operator!" << endl;
-                cout << original << " and " << holder.top() << endl;
-                break;
-
-        }
-
-        cout << "End in Perform Op" << endl;
-    }
-}
-
-
+/*
+ * What's the benefit of breaking a string into a stack when the op could be don
+ * right away? I'm honestly unsure. Instead of dealing with chars we could deal with strings instead
+ * operators could be set as strings.
+ */
 
 int main(int argc, char * argv[]){
 
-
-    stack <char> operators;
-    stack <int> operands;
-    stack <int> op_holder;
-    string  word;
-    int current;
-    int count;
-    word = "*223";
-    count = word.length();
-
-    try {
-        cout << stoi("b") << endl;
-    } catch(exception e){
-
-    }
-
-    /* *
-     * Better implementation would be to make sure that
-     * each input is separated by a space (" ").
-     * split() the input string into an array by spaces.
-     * */
-
-    int i = 0;
-    while(i < count){
-        cout << "Stuck in main" << endl;
-        cout << "Current letter: " << word[i] << endl;
+    string holder;
+    string operation;
+    string word = "/9899";
+    stack<string> operands;
+    stack<string> operators;
 
 
-
-        switch(word[i]){
-            case '*':
-                operators.push('*');
-                operands.push('$');
-                break;
-            case '/':
-                operators.push('/');
-                operands.push('$');
-                break;
-            case '+':
-                operators.push('+');
-                operands.push('$');
-                cout << "pushed operator +" << endl;
-                break;
-            case '-':
-                operators.push('-');
-                operands.push('$');
-                break;
-
-
-            default:
-                // Check for a marker on top of operands stack:
-                // If there is a marker push the current token onto operand stack.
-                if ( isMarker( operands.top() )){
-                    try {
-                        cout << "Top of Operands: " << operands.top() << endl;
-                        cout << "Letter in try block: " << word[i] << endl;
-//                        current = word[i] - 48;
-                        cout << "Current in try block: " << current << endl;
-
-                        operands.push(word[i] - 48);
-
-                        cout << "Pushed word[i]-48 into operands in try block" << endl;
-                    } catch(exception e){
-                        cerr << "Illegal Token Found" << endl;
-                        break;
-                    }
-                    if(i == (count - 1)){
-                        op_holder.push(operands.top()); // holds operands that will be acted on
-                        operands.pop();
-                        performOperation(current, operands, op_holder, operators);
-                    }
-
-                }
-
-
-
-
-                    // add operands to the other_operands
-                // else,
-                else{
-                    while(!isMarker(operands.top())){
-                        try {
-                            op_holder.push(current);
-                            current = word[i] - 48;
-                             // holds operands that will be acted on
-
-                            cout << "popping operand from try" << endl;
-                            if(!operands.empty()){
-                                op_holder.push(operands.top());
-                                operands.pop();
-                            }
-                            performOperation(current, operands, op_holder, operators);
-
-                            cout << "End of try and else " << endl;
-
-                        }catch (exception e){
-                            cerr << "Illegal Token Found 2" << endl;
-                            break;
-                        }
-                    }
-                    if(operands.empty()){
-                        cout << "This is current: " << current << endl;
-                    }
-
-                }
-
-
-
+    for(int i = 0; i < word.length(); i++){
+        stringstream ss;
+        ss << word[i];
+        ss >> holder;
+        cout << holder << endl;
+        // push + and marker onto operator stack
+        if(holder == "+"){
+            operators.push("+");
+            operands.push("$");
         }
-        i++;
+        // push - and marker onto operator stack
+        else if(holder == "-"){
+            operators.push("-");
+            operands.push("$");
+        }
+        // push * and marker onto operator stack
+        else if(holder == "*"){
+            operators.push("*");
+            operands.push("$");
+        }
+        // push / and marker onto operator stack
+        else if(holder == "/"){
+            operators.push("/");
+            operands.push("$");
+        }
+        // else it is an operand
+        else{
+            // If the top of the operands stack is a marker -> $
+            // push holder onto the operands stack
+            if(operands.top() == "$"){
+                operands.push(holder);
+            }
+
+            // else the top of the operand stack is an operand
+            else{
+                // Prepare operand for equations by pushing onto stack
+                operands.push(holder);
+
+                if (!operators.empty()){operation = operators.top();operators.pop();}
+
+                int current = stoi(operands.top());
+                operands.pop();
+                // while(operand.top()) isn't a marker perform an operation.
+                // after the operation is done, push it onto the stack.
+                while(operands.top() != "$" && !operands.empty()){
+                    if(operation == "+"){
+                        current += stoi(operands.top());
+                        operands.pop();
+                    }
+                    else if(operation == "-"){
+                        current -= stoi(operands.top());
+                        operands.pop();
+                    }
+                    else if(operation == "*"){
+                        current *= stoi(operands.top());
+                        operands.pop();
+                    }
+                    else if(operation == "/"){
+                        current /= stoi(operands.top());
+                        operands.pop();
+                    }
+
+                }
+                operands.push(to_string(current));
+            }
+        }
     }
 
-    cout << "This is the last current: " << current << " and Top of operands: " << operands.top() << " " << (int) '$' << endl;
+cout << "answer: " << operands.top() << endl;
 
 }
 
-// Problem is that holder is getting an unconverted char push on top of it.
